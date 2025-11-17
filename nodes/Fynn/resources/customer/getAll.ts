@@ -47,7 +47,7 @@ export const customerGetManyDescription: INodeProperties[] = [
 			minValue: 1,
 			maxValue: 100,
 		},
-		default: 30,
+		default: 50,
 		routing: {
 			send: {
 				type: 'query',
@@ -92,15 +92,28 @@ export const customerGetManyDescription: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Search',
-				name: 'search',
+				displayName: 'Company Name',
+				name: 'companyName',
 				type: 'string',
 				default: '',
-				description: 'Search term',
+				description: 'Filter by company name',
 				routing: {
 					send: {
 						type: 'query',
-						property: 'search',
+						property: 'companyName',
+					},
+				},
+			},
+			{
+				displayName: 'Customer Group Name',
+				name: 'customerGroup.name',
+				type: 'string',
+				default: '',
+				description: 'Filter by customer group name',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'customerGroup.name',
 					},
 				},
 			},
@@ -114,6 +127,33 @@ export const customerGetManyDescription: INodeProperties[] = [
 					send: {
 						type: 'query',
 						property: 'customerNumber',
+					},
+				},
+			},
+			{
+				displayName: 'Datev ID',
+				name: 'datevId',
+				type: 'string',
+				default: '',
+				description: 'Filter by Datev ID',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'datevId',
+					},
+				},
+			},
+			{
+				displayName: 'Email',
+				name: 'emailAddresses.email',
+				type: 'string',
+				default: '',
+				description: 'Filter by email address',
+				placeholder: 'max@fynndemo.com',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'emailAddresses.email',
 					},
 				},
 			},
@@ -144,28 +184,28 @@ export const customerGetManyDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Company Name',
-				name: 'companyName',
+				displayName: 'Partner',
+				name: 'partner',
 				type: 'string',
 				default: '',
-				description: 'Filter by company name',
+				description: 'Filter by partner',
 				routing: {
 					send: {
 						type: 'query',
-						property: 'companyName',
+						property: 'partner',
 					},
 				},
 			},
 			{
-				displayName: 'Email',
-				name: 'emailAddresses.email',
+				displayName: 'Search',
+				name: 'search',
 				type: 'string',
 				default: '',
-				description: 'Filter by email address',
+				description: 'Search term',
 				routing: {
 					send: {
 						type: 'query',
-						property: 'emailAddresses.email',
+						property: 'search',
 					},
 				},
 			},
@@ -183,54 +223,15 @@ export const customerGetManyDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Datev ID',
-				name: 'datevId',
-				type: 'string',
-				default: '',
-				description: 'Filter by Datev ID',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'datevId',
-					},
-				},
-			},
-			{
 				displayName: 'VAT ID Valid',
 				name: 'isVatIdValid',
 				type: 'boolean',
 				default: false,
-				description: 'Filter by VAT ID validation status',
+				description: 'Whether to filter by VAT ID validation status',
 				routing: {
 					send: {
 						type: 'query',
 						property: 'isVatIdValid',
-					},
-				},
-			},
-			{
-				displayName: 'Customer Group Name',
-				name: 'customerGroup.name',
-				type: 'string',
-				default: '',
-				description: 'Filter by customer group name',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'customerGroup.name',
-					},
-				},
-			},
-			{
-				displayName: 'Partner',
-				name: 'partner',
-				type: 'string',
-				default: '',
-				description: 'Filter by partner',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'partner',
 					},
 				},
 			},

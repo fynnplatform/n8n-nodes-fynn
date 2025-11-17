@@ -3,12 +3,15 @@ import type {
 	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
+	Icon,
 } from 'n8n-workflow';
 
 export class FynnApi implements ICredentialType {
 	name = 'fynnApi';
 
 	displayName = 'Fynn API';
+
+	icon: Icon = { light: 'file:fynn.svg', dark: 'file:fynn.dark.svg' };
 
 	// Link to your community node's README
 	documentationUrl = 'https://github.com/org/-fynn?tab=readme-ov-file#credentials';
