@@ -1,46 +1,135 @@
 # n8n-nodes-fynn
 
-This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
-
-_App/service name_ is _one or two sentences describing the service this node integrates with_.
+This is an n8n community node that provides integration with the Fynn API. Fynn is a subscription management platform that helps businesses manage recurring billing, subscriptions, and customer relationships.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
-
-[Installation](#installation)
-[Operations](#operations)
-[Credentials](#credentials)
-[Compatibility](#compatibility)
-[Usage](#usage)
-[Resources](#resources)
-[Version history](#version-history)
 
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
+You can install this node directly from the n8n UI by searching for "Fynn" in the community nodes section, or manually via npm:
+
+```bash
+npm install n8n-nodes-fynn
+```
+
 ## Operations
 
-_List the operations supported by your node._
+This node provides two main components:
+
+### Fynn Node (Actions)
+
+The Fynn node allows you to interact with the Fynn API to manage customers, subscriptions, and invoices.
+
+#### Customer Operations
+
+- **Create**: Create a new customer in Fynn
+- **Find**: Search for a customer by ID or external ID
+- **Get Many**: Retrieve multiple customers with filtering and pagination
+- **Update**: Update an existing customer's information
+- **Delete**: Delete a customer from Fynn
+- **Archive**: Archive a customer (soft delete)
+- **Update Payment Method**: Update the payment method for a customer
+- **Request OTP**: Request a one-time password for customer authentication
+
+#### Subscription Operations
+
+- **Find**: Search for a subscription by ID
+- **Cancel**: Cancel a subscription (stops billing after cancellation date)
+- **Pause**: Pause a subscription (stops billing immediately)
+- **Resume**: Resume a paused subscription (starts billing again)
+- **Extend Trial**: Extend the trial period of a subscription
+- **Revoke Trial**: Revoke the trial period and start billing immediately
+- **Update Payment Method**: Update the payment method for a subscription
+- **Update Invoice Address**: Update the invoice address for a subscription
+
+#### Invoice Operations
+
+- **Find**: Search for an invoice by ID
+
+### Fynn Trigger Node (Webhooks)
+
+The Fynn Trigger node allows you to receive webhook events from Fynn to start your workflows automatically. It supports a wide range of events including:
+
+- **Cart Events**: `cart.completed`, `cart.paid`
+- **Coupon Events**: `coupon.created`, `coupon.deleted`, `coupon.toggled`, `coupon.updated`
+- **Customer Events**: `customer.created`, `customer.updated`, `customer.archived`, `customer.unarchived`, `customer.deleted`
+- **Invoice Events**: `invoice.created`, `invoice.finalized`, `invoice.paid`, `invoice.canceled`, `invoice.closed`, `invoice.credited`, `invoice.refunded`, `invoice.remindered`, `invoice.requires_approval`, `invoice.payment_method.updated`
+- **Subscription Events**: `subscription.created`, `subscription.updated`, `subscription.canceled`, `subscription.renewed`, `subscription.trial_started`, `subscription.trial_ended`, `subscription.paused`, `subscription.resumed`, `subscription.payment_method.updated`
+- **Dunning Document Events**: `dunning_document.created`, `dunning_document.paid`, `dunning_document.canceled`
+- **Feature Events**: `feature.created`, `feature.activated`, `feature.archived`
+- **Entitlement Events**: `entitlement.state.updated`
+
+And many more. The trigger node automatically registers and manages webhooks with Fynn, and includes optional webhook signature validation for security.
 
 ## Credentials
 
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
+To use this node, you need to create Fynn API credentials in n8n:
+
+1. In n8n, go to **Credentials** → **Add Credential**
+2. Search for **Fynn API** and select it
+3. Fill in the following fields:
+   - **Tenant Name**: Your Fynn tenant name (used to build the API URL: `https://{tenantName}.coreapi.io`)
+   - **Access Token**: Your Fynn API access token (used as Bearer token for authentication)
+
+### Prerequisites
+
+- A Fynn account with API access
+- An API access token from your Fynn dashboard
+
+The credentials will be tested automatically when you save them to ensure they are valid.
 
 ## Compatibility
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+- **Minimum n8n version**: 1.0.0
+- **Tested with n8n versions**: 1.0.0 and above
+- **Node.js version**: Compatible with Node.js 18.x and above
 
 ## Usage
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
+### Basic Example: Create a Customer
 
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+1. Add a **Fynn** node to your workflow
+2. Select **Customer** as the resource
+3. Choose **Create** as the operation
+4. Fill in the customer details (name, email, etc.)
+5. Connect your Fynn API credentials
+6. Execute the workflow
+
+### Webhook Example: Trigger on Customer Creation
+
+1. Add a **Fynn Trigger** node to your workflow
+2. Select the event (e.g., `customer.created`)
+3. Optionally configure webhook secret for signature validation
+4. Connect your Fynn API credentials
+5. The workflow will automatically start when a customer is created in Fynn
+
+### Advanced: Update Subscription Payment Method
+
+1. Add a **Fynn** node to your workflow
+2. Select **Subscription** as the resource
+3. Choose **Update Payment Method** as the operation
+4. Provide the subscription ID and new payment method details
+5. Execute the workflow
+
+For more examples and use cases, refer to the [n8n documentation](https://docs.n8n.io/try-it-out/) and the [Fynn API documentation](https://fynn.eu).
 
 ## Resources
 
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* _Link to app/service documentation._
+* [Fynn Website](https://fynn.eu)
+* [Fynn API Documentation](https://fynn.eu/docs)
+* [n8n Documentation](https://docs.n8n.io/)
 
 ## Version history
 
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+### 0.1.0
+
+- Initial release
+- Support for Customer operations (Create, Find, Get Many, Update, Delete, Archive, Update Payment Method, Request OTP)
+- Support for Subscription operations (Find, Cancel, Pause, Resume, Extend Trial, Revoke Trial, Update Payment Method, Update Invoice Address)
+- Support for Invoice operations (Find)
+- Fynn Trigger node with webhook support for all Fynn events
+- Automatic webhook registration and management
+- Webhook signature validation support

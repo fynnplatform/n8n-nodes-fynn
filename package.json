@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "n8n community node for Fynn API integration",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://fynn.eu",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fynnplatform/n8n-node-fynn.git"
+    "url": "git+https://github.com/fynnplatform/n8n-nodes-fynn.git"
   },
   "scripts": {
     "build": "n8n-node build",
@@ -24,12 +24,14 @@
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },
+  "main": "index.js",
   "files": [
-    "dist"
+    "dist",
+    "index.js"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "strict": true,
+    "strict": false,
     "credentials": [
       "dist/credentials/FynnApi.credentials.js"
     ],

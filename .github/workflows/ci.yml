@@ -8,6 +8,12 @@ on:
   release:
     types: [created]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish to npm'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   build:
@@ -33,7 +39,6 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'created'
     permissions:
       contents: read
       id-token: write
@@ -50,10 +55,46 @@ jobs:
       - name: Install dependencies
         run: 'npm ci'
 
+      - name: Run lint
+        run: 'npm run lint'
+
       - name: Run build
         run: 'npm run build'
 
+      - name: Extract version from package.json
+        id: package-version
+        run: |
+          VERSION=$(grep -o '"version": "[^"]*"' package.json | cut -d'"' -f4)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Current package version: $VERSION"
+
+      - name: Check if version exists on npm
+        if: github.event_name == 'release'
+        id: check-version
+        run: |
+          VERSION="${{ steps.package-version.outputs.version }}"
+          if npm view n8n-nodes-fynn@$VERSION version > /dev/null 2>&1; then
+            echo "⚠️ Version $VERSION already exists on npm!"
+            echo "exists=true" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ Version $VERSION is available for publishing"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Publish to npm
-        run: 'npm publish --access public'
+        if: github.event_name == 'release' && steps.check-version.outputs.exists == 'false'
+        run: |
+          echo "🚀 Publishing n8n-nodes-fynn@${{ steps.package-version.outputs.version }} to npm..."
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish summary
+        if: always()
+        run: |
+          echo "## 📦 npm Publish Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: n8n-nodes-fynn" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
