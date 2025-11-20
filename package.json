@@ -1,6 +1,6 @@
 {
   "name": "@fynnplatform/n8n-nodes-fynn",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "n8n community node for Fynn API integration",
   "license": "MIT",
   "homepage": "https://fynn.eu",
