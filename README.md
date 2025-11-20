@@ -36,6 +36,7 @@ The Fynn node allows you to interact with the Fynn API to manage customers, subs
 #### Subscription Operations
 
 - **Find**: Search for a subscription by ID
+- **Get Many**: Retrieve multiple subscriptions with filtering and pagination
 - **Cancel**: Cancel a subscription (stops billing after cancellation date)
 - **Pause**: Pause a subscription (stops billing immediately)
 - **Resume**: Resume a paused subscription (starts billing again)
@@ -123,6 +124,12 @@ For more examples and use cases, refer to the [n8n documentation](https://docs.n
 * [n8n Documentation](https://docs.n8n.io/)
 
 ## Version history
+
+### 0.2.1 (2025-11-20)
+
+- **Added**: Neue Subscription-Operationen für erweiterte Abonnement-Verwaltung:
+  - **Get Many**: Mehrere Abonnements mit Filterung und Paginierung abrufen
+  - Alle bestehenden Subscription-Operationen wurden erweitert und verbessert (Cancel, Extend Trial, Find, Pause, Resume, Revoke Trial, Update Invoice Address, Update Payment Method)
 
 ### 0.1.0
 
