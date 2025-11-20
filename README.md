@@ -125,10 +125,10 @@ For more examples and use cases, refer to the [n8n documentation](https://docs.n
 
 ## Version history
 
-### 0.2.1 (2025-11-20)
+### 0.2.2 (2025-11-20)
 
 - **Added**: Neue Subscription-Operationen für erweiterte Abonnement-Verwaltung:
-  - **Get Many**: Mehrere Abonnements mit Filterung und Paginierung abrufen
+  - **Get Many**: Mehrere Abonnements mit Filterung und Paginierung abrufenpac
   - Alle bestehenden Subscription-Operationen wurden erweitert und verbessert (Cancel, Extend Trial, Find, Pause, Resume, Revoke Trial, Update Invoice Address, Update Payment Method)
 
 ### 0.1.0
