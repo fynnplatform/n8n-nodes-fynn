@@ -6,6 +6,7 @@ import { customerUpdateDescription } from './update';
 import { customerUpdatePaymentMethodDescription } from './updatePaymentMethod';
 import { customerFindDescription } from './find';
 import { customerGetManyDescription } from './getAll';
+import { customerRequestOtpDescription } from './requestOtp';
 
 const showOnlyForCustomers = {
 	resource: ['customer'],
@@ -82,6 +83,18 @@ export const customerDescription: INodeProperties[] = [
 				},
 			},
 			{
+				name: 'Request OTP',
+				value: 'requestOtp',
+				action: 'Request a one time token for a customer',
+				description: 'Request a one time token for a customer',
+				routing: {
+					request: {
+						method: 'POST',
+						url: '/public/customer/request-otp',
+					},
+				},
+			},
+			{
 				name: 'Update',
 				value: 'update',
 				action: 'Update a customer',
@@ -115,5 +128,6 @@ export const customerDescription: INodeProperties[] = [
 		...customerDeleteDescription,
 		...customerArchiveDescription,
 		...customerUpdatePaymentMethodDescription,
+		...customerRequestOtpDescription,
 	];
 

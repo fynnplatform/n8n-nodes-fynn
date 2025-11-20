@@ -14,9 +14,16 @@ export class FynnApi implements ICredentialType {
 	icon: Icon = { light: 'file:fynn.svg', dark: 'file:fynn.dark.svg' };
 
 	// Link to your community node's README
-	documentationUrl = 'https://github.com/org/-fynn?tab=readme-ov-file#credentials';
+	documentationUrl = 'https://docs.fynn.eu';
 
 	properties: INodeProperties[] = [
+		{
+			displayName: '',
+			name: 'documentationNotice',
+			type: 'notice',
+			default: '',
+			description: 'Need help filling out these fields? [Open docs](https://docs.fynn.eu)',
+		},
 		{
 			displayName: 'Tenant Name',
 			name: 'tenantName',
