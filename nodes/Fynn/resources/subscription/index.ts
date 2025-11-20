@@ -63,7 +63,7 @@ export const subscriptionDescription: INodeProperties[] = [
 				name: 'Get Many',
 				value: 'getAll',
 				action: 'Get many subscriptions',
-				description: 'Get all subscriptions with filtering and pagination',
+				description: 'Get many subscriptions with filtering and pagination',
 				routing: {
 					request: {
 						method: 'GET',

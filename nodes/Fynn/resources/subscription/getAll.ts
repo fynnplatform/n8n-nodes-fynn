@@ -47,7 +47,7 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 			minValue: 1,
 			maxValue: 100,
 		},
-		default: 30,
+		default: 50,
 		routing: {
 			send: {
 				type: 'query',
@@ -106,69 +106,15 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Subscription ID',
-				name: 'id',
+				displayName: 'Partner',
+				name: 'partner',
 				type: 'string',
 				default: '',
-				description: 'Filter by subscription ID',
-				placeholder: '00000000-0000-0000-0000-000000000000',
+				description: 'Filter by partner',
 				routing: {
 					send: {
 						type: 'query',
-						property: 'id',
-					},
-				},
-			},
-			{
-				displayName: 'Subscription Number',
-				name: 'number',
-				type: 'string',
-				default: '',
-				description: 'Filter by subscription number',
-				placeholder: 'S-00000001',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'number',
-					},
-				},
-			},
-			{
-				displayName: 'Status',
-				name: 'status',
-				type: 'options',
-				options: [
-					{
-						name: 'Draft',
-						value: 'draft',
-					},
-					{
-						name: 'Active',
-						value: 'active',
-					},
-					{
-						name: 'Paused',
-						value: 'paused',
-					},
-					{
-						name: 'Cancelled',
-						value: 'cancelled',
-					},
-					{
-						name: 'Terminated',
-						value: 'terminated',
-					},
-					{
-						name: 'Offer',
-						value: 'offer',
-					},
-				],
-				default: '',
-				description: 'Filter by subscription status',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'status',
+						property: 'partner',
 					},
 				},
 			},
@@ -200,19 +146,6 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Partner',
-				name: 'partner',
-				type: 'string',
-				default: '',
-				description: 'Filter by partner',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'partner',
-					},
-				},
-			},
-			{
 				displayName: 'Search',
 				name: 'search',
 				type: 'string',
@@ -222,6 +155,73 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 					send: {
 						type: 'query',
 						property: 'search',
+					},
+				},
+			},
+			{
+				displayName: 'Status',
+				name: 'status',
+				type: 'options',
+				options: [
+					{
+						name: 'Active',
+						value: 'active',
+					},
+					{
+						name: 'Cancelled',
+						value: 'cancelled',
+					},
+					{
+						name: 'Draft',
+						value: 'draft',
+					},
+					{
+						name: 'Offer',
+						value: 'offer',
+					},
+					{
+						name: 'Paused',
+						value: 'paused',
+					},
+					{
+						name: 'Terminated',
+						value: 'terminated',
+					},
+				],
+				default: 'draft',
+				description: 'Filter by subscription status',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'status',
+					},
+				},
+			},
+			{
+				displayName: 'Subscription ID',
+				name: 'id',
+				type: 'string',
+				default: '',
+				description: 'Filter by subscription ID',
+				placeholder: '00000000-0000-0000-0000-000000000000',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'id',
+					},
+				},
+			},
+			{
+				displayName: 'Subscription Number',
+				name: 'number',
+				type: 'string',
+				default: '',
+				description: 'Filter by subscription number',
+				placeholder: 'S-00000001',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'number',
 					},
 				},
 			},
@@ -238,52 +238,6 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Status',
-				name: 'order[status]',
-				type: 'options',
-				options: [
-					{
-						name: 'Ascending',
-						value: 'asc',
-					},
-					{
-						name: 'Descending',
-						value: 'desc',
-					},
-				],
-				default: '',
-				description: 'Sort by status',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'order[status]',
-					},
-				},
-			},
-			{
-				displayName: 'Created At',
-				name: 'order[createdAt]',
-				type: 'options',
-				options: [
-					{
-						name: 'Ascending',
-						value: 'asc',
-					},
-					{
-						name: 'Descending',
-						value: 'desc',
-					},
-				],
-				default: '',
-				description: 'Sort by creation date',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'order[createdAt]',
-					},
-				},
-			},
-			{
 				displayName: 'Activated At',
 				name: 'order[activatedAt]',
 				type: 'options',
@@ -297,35 +251,12 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 						value: 'desc',
 					},
 				],
-				default: '',
+				default: 'asc',
 				description: 'Sort by activation date',
 				routing: {
 					send: {
 						type: 'query',
 						property: 'order[activatedAt]',
-					},
-				},
-			},
-			{
-				displayName: 'Trial Ends On',
-				name: 'order[trialEndsOn]',
-				type: 'options',
-				options: [
-					{
-						name: 'Ascending',
-						value: 'asc',
-					},
-					{
-						name: 'Descending',
-						value: 'desc',
-					},
-				],
-				default: '',
-				description: 'Sort by trial end date',
-				routing: {
-					send: {
-						type: 'query',
-						property: 'order[trialEndsOn]',
 					},
 				},
 			},
@@ -343,12 +274,81 @@ export const subscriptionGetManyDescription: INodeProperties[] = [
 						value: 'desc',
 					},
 				],
-				default: '',
+				default: 'asc',
 				description: 'Sort by contract end date',
 				routing: {
 					send: {
 						type: 'query',
 						property: 'order[contractDetails.contractEnd]',
+					},
+				},
+			},
+			{
+				displayName: 'Created At',
+				name: 'order[createdAt]',
+				type: 'options',
+				options: [
+					{
+						name: 'Ascending',
+						value: 'asc',
+					},
+					{
+						name: 'Descending',
+						value: 'desc',
+					},
+				],
+				default: 'asc',
+				description: 'Sort by creation date',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'order[createdAt]',
+					},
+				},
+			},
+			{
+				displayName: 'Status',
+				name: 'order[status]',
+				type: 'options',
+				options: [
+					{
+						name: 'Ascending',
+						value: 'asc',
+					},
+					{
+						name: 'Descending',
+						value: 'desc',
+					},
+				],
+				default: 'asc',
+				description: 'Sort by status',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'order[status]',
+					},
+				},
+			},
+			{
+				displayName: 'Trial Ends On',
+				name: 'order[trialEndsOn]',
+				type: 'options',
+				options: [
+					{
+						name: 'Ascending',
+						value: 'asc',
+					},
+					{
+						name: 'Descending',
+						value: 'desc',
+					},
+				],
+				default: 'asc',
+				description: 'Sort by trial end date',
+				routing: {
+					send: {
+						type: 'query',
+						property: 'order[trialEndsOn]',
 					},
 				},
 			},
