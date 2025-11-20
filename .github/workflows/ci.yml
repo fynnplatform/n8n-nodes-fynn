@@ -41,7 +41,10 @@ jobs:
 
   publish:
     needs: build
-    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
+    if: |
+      github.event_name == 'release' || 
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || 
+      (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -49,6 +52,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Debug workflow trigger
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Is tag: ${{ startsWith(github.ref, 'refs/tags/') }}"
+          echo "Workflow dispatch publish: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == 'true' }}"
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -73,7 +83,10 @@ jobs:
           echo "📦 Current package version: $VERSION"
 
       - name: Check if version exists on npm
-        if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
+        if: |
+          github.event_name == 'release' || 
+          (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || 
+          (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
         id: check-version
         run: |
           VERSION="${{ steps.package-version.outputs.version }}"
@@ -87,7 +100,11 @@ jobs:
           fi
 
       - name: Publish to npm
-        if: (github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')) && steps.check-version.outputs.exists == 'false'
+        if: |
+          (github.event_name == 'release' || 
+           (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || 
+           (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')) && 
+          steps.check-version.outputs.exists == 'false'
         run: |
           echo "🚀 Publishing @fynnplatform/n8n-nodes-fynn@${{ steps.package-version.outputs.version }} to npm..."
           npm publish --access public
