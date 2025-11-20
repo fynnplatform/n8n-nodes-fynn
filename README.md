@@ -125,7 +125,7 @@ For more examples and use cases, refer to the [n8n documentation](https://docs.n
 
 ## Version history
 
-### 0.2.2 (2025-11-20)
+### 0.2.3 (2025-11-20)
 
 - **Added**: Neue Subscription-Operationen für erweiterte Abonnement-Verwaltung:
   - **Get Many**: Mehrere Abonnements mit Filterung und Paginierung abrufenpac

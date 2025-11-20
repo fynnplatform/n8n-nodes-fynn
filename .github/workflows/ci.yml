@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'     # Triggert bei Tags wie v0.2.2
+      - '[0-9]+.[0-9]+.[0-9]+'  # Triggert auch bei Tags wie 0.2.2
   release:
     types: [created]
   workflow_dispatch:
@@ -12,7 +15,7 @@ on:
       publish:
         description: 'Publish to npm'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
@@ -38,6 +41,7 @@ jobs:
 
   publish:
     needs: build
+    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -69,7 +73,7 @@ jobs:
           echo "📦 Current package version: $VERSION"
 
       - name: Check if version exists on npm
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
         id: check-version
         run: |
           VERSION="${{ steps.package-version.outputs.version }}"
@@ -83,7 +87,7 @@ jobs:
           fi
 
       - name: Publish to npm
-        if: github.event_name == 'release' && steps.check-version.outputs.exists == 'false'
+        if: (github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')) && steps.check-version.outputs.exists == 'false'
         run: |
           echo "🚀 Publishing @fynnplatform/n8n-nodes-fynn@${{ steps.package-version.outputs.version }} to npm..."
           npm publish --access public
