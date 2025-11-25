@@ -148,7 +148,19 @@ export class FynnTrigger implements INodeType {
 		// Get raw body for signature validation
 		const rawBody = this.getBodyData();
 		const body = typeof rawBody === 'string' ? rawBody : JSON.stringify(req.body);
-		const bodyData = (typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody) as IDataObject;
+		const bodyData = (typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody) as IDataObject | IDataObject[];
+
+		// n8n sends webhook data as an array with a wrapper object
+		// Extract the actual webhook payload from the wrapper
+		let webhookPayload: IDataObject;
+		if (Array.isArray(bodyData) && bodyData.length > 0) {
+			// n8n format: [{ body: { event: {...}, data: {...} }, headers: {...}, ... }]
+			const wrapper = bodyData[0] as IDataObject;
+			webhookPayload = (wrapper.body as IDataObject) || wrapper;
+		} else {
+			// Fallback: assume direct format
+			webhookPayload = bodyData as IDataObject;
+		}
 
 		// Validate webhook signature
 		if (webhookSecret) {
@@ -168,7 +180,10 @@ export class FynnTrigger implements INodeType {
 		}
 
 		// Check if the event matches the configured event
-		const webhookEvent = bodyData?.event || bodyData?.type;
+		// The event type is in webhookPayload.event.type
+		const eventData = webhookPayload?.event as IDataObject;
+		const webhookEvent = eventData?.type as string || webhookPayload?.event as string || webhookPayload?.type as string;
+		
 		if (webhookEvent && webhookEvent !== event) {
 			return {
 				workflowData: [],
@@ -176,8 +191,9 @@ export class FynnTrigger implements INodeType {
 			};
 		}
 
+		// Return the actual webhook payload (event + data), not the wrapper
 		return {
-			workflowData: [this.helpers.returnJsonArray(bodyData)],
+			workflowData: [this.helpers.returnJsonArray(webhookPayload)],
 		};
 	}
 }
