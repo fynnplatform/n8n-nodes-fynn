@@ -7,8 +7,6 @@ import type {
 	IDataObject,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, ApplicationError } from 'n8n-workflow';
-import { webhookDescription } from './resources/webhook';
-import { createHmac } from 'crypto';
 
 export class FynnTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -34,14 +32,332 @@ export class FynnTrigger implements INodeType {
 				path: 'webhook',
 			},
 		],
-		requestDefaults: {
-			baseURL: '=https://{{$credentials.tenantName}}.coreapi.io',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
+		properties: [
+			{
+				displayName: 'Event',
+				name: 'event',
+				type: 'options',
+				required: true,
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Cart Completed',
+						value: 'cart.completed',
+						description: 'Triggered when a cart is completed',
+					},
+					{
+						name: 'Cart Paid',
+						value: 'cart.paid',
+						description: 'Triggered when a cart is paid',
+					},
+					{
+						name: 'Coupon Created',
+						value: 'coupon.created',
+						description: 'Triggered when a coupon is created',
+					},
+					{
+						name: 'Coupon Deleted',
+						value: 'coupon.deleted',
+						description: 'Triggered when a coupon is deleted',
+					},
+					{
+						name: 'Coupon Toggled',
+						value: 'coupon.toggled',
+						description: 'Triggered when a coupon is toggled',
+					},
+					{
+						name: 'Coupon Updated',
+						value: 'coupon.updated',
+						description: 'Triggered when a coupon is updated',
+					},
+					{
+						name: 'Customer Archived',
+						value: 'customer.archived',
+						description: 'Triggered when a customer is archived',
+					},
+					{
+						name: 'Customer Created',
+						value: 'customer.created',
+						description: 'Triggered when a customer is created',
+					},
+					{
+						name: 'Customer Deleted',
+						value: 'customer.deleted',
+						description: 'Triggered when a customer is deleted',
+					},
+					{
+						name: 'Customer Unarchived',
+						value: 'customer.unarchived',
+						description: 'Triggered when a customer is unarchived',
+					},
+					{
+						name: 'Customer Updated',
+						value: 'customer.updated',
+						description: 'Triggered when a customer is updated',
+					},
+					{
+						name: 'Dunning Document Canceled',
+						value: 'dunning_document.canceled',
+						description: 'Triggered when a dunning document is canceled',
+					},
+					{
+						name: 'Dunning Document Created',
+						value: 'dunning_document.created',
+						description: 'Triggered when a dunning document is created',
+					},
+					{
+						name: 'Dunning Document Paid',
+						value: 'dunning_document.paid',
+						description: 'Triggered when a dunning document is paid',
+					},
+					{
+						name: 'Entitlement State Updated',
+						value: 'entitlement.state.updated',
+						description: 'Triggered when an entitlement state is updated',
+					},
+					{
+						name: 'Feature Activated',
+						value: 'feature.activated',
+						description: 'Triggered when a feature is activated',
+					},
+					{
+						name: 'Feature Archived',
+						value: 'feature.archived',
+						description: 'Triggered when a feature is archived',
+					},
+					{
+						name: 'Feature Created',
+						value: 'feature.created',
+						description: 'Triggered when a feature is created',
+					},
+					{
+						name: 'Invoice Canceled',
+						value: 'invoice.canceled',
+						description: 'Triggered when an invoice is canceled',
+					},
+					{
+						name: 'Invoice Closed',
+						value: 'invoice.closed',
+						description: 'Triggered when an invoice is closed',
+					},
+					{
+						name: 'Invoice Created',
+						value: 'invoice.created',
+						description: 'Triggered when an invoice is created',
+					},
+					{
+						name: 'Invoice Credited',
+						value: 'invoice.credited',
+						description: 'Triggered when an invoice is credited',
+					},
+					{
+						name: 'Invoice Finalized',
+						value: 'invoice.finalized',
+						description: 'Triggered when an invoice is finalized',
+					},
+					{
+						name: 'Invoice Paid',
+						value: 'invoice.paid',
+						description: 'Triggered when an invoice is paid',
+					},
+					{
+						name: 'Invoice Payment Method Updated',
+						value: 'invoice.payment_method.updated',
+						description: 'Triggered when an invoice payment method is updated',
+					},
+					{
+						name: 'Invoice Refunded',
+						value: 'invoice.refunded',
+						description: 'Triggered when an invoice is refunded',
+					},
+					{
+						name: 'Invoice Remindered',
+						value: 'invoice.remindered',
+						description: 'Triggered when an invoice reminder is sent',
+					},
+					{
+						name: 'Invoice Requires Approval',
+						value: 'invoice.requires_approval',
+						description: 'Triggered when an invoice requires approval',
+					},
+					{
+						name: 'Invoice Unpaid',
+						value: 'invoice.unpaid',
+						description: 'Triggered when an invoice becomes unpaid',
+					},
+					{
+						name: 'Invoice Updated',
+						value: 'invoice.updated',
+						description: 'Triggered when an invoice is updated',
+					},
+					{
+						name: 'Payment Method Created',
+						value: 'payment_method.created',
+						description: 'Triggered when a payment method is created',
+					},
+					{
+						name: 'Payment Method Updated',
+						value: 'payment_method.updated',
+						description: 'Triggered when a payment method is updated',
+					},
+					{
+						name: 'Price Plan Archived',
+						value: 'price_plan.archived',
+						description: 'Triggered when a price plan is archived',
+					},
+					{
+						name: 'Product Archived',
+						value: 'product.archived',
+						description: 'Triggered when a product is archived',
+					},
+					{
+						name: 'Product Created',
+						value: 'product.created',
+						description: 'Triggered when a product is created',
+					},
+					{
+						name: 'Product Deleted',
+						value: 'product.deleted',
+						description: 'Triggered when a product is deleted',
+					},
+					{
+						name: 'Product Updated',
+						value: 'product.updated',
+						description: 'Triggered when a product is updated',
+					},
+					{
+						name: 'Subscription Activated',
+						value: 'subscription.activated',
+						description: 'Triggered when a subscription is activated',
+					},
+					{
+						name: 'Subscription Billed',
+						value: 'subscription.billed',
+						description: 'Triggered when a subscription is billed',
+					},
+					{
+						name: 'Subscription Canceled',
+						value: 'subscription.canceled',
+						description: 'Triggered when a subscription is canceled',
+					},
+					{
+						name: 'Subscription Cancellation Revoked',
+						value: 'subscription.cancellation_revoked',
+						description: 'Triggered when a subscription cancellation is revoked',
+					},
+					{
+						name: 'Subscription Changed',
+						value: 'subscription.changed',
+						description: 'Triggered when a subscription is changed',
+					},
+					{
+						name: 'Subscription Created',
+						value: 'subscription.created',
+						description: 'Triggered when a subscription is created',
+					},
+					{
+						name: 'Subscription Delivery Address Updated',
+						value: 'subscription.delivery_address.updated',
+						description: 'Triggered when a subscription delivery address is updated',
+					},
+					{
+						name: 'Subscription Invoice Address Updated',
+						value: 'subscription.invoice_address.updated',
+						description: 'Triggered when a subscription invoice address is updated',
+					},
+					{
+						name: 'Subscription Item Instant Metered',
+						value: 'subscription.item.instant_metered',
+						description: 'Triggered when a subscription item instant metered event occurs',
+					},
+					{
+						name: 'Subscription Item Metered',
+						value: 'subscription.item.metered',
+						description: 'Triggered when a subscription item metered event occurs',
+					},
+					{
+						name: 'Subscription Item Quantity Changed',
+						value: 'subscription.item.quantity_changed',
+						description: 'Triggered when a subscription item quantity is changed',
+					},
+					{
+						name: 'Subscription Item Terminated',
+						value: 'subscription_item.terminated',
+						description: 'Triggered when a subscription item is terminated',
+					},
+					{
+						name: 'Subscription Paused',
+						value: 'subscription.paused',
+						description: 'Triggered when a subscription is paused',
+					},
+					{
+						name: 'Subscription Payment Method Updated',
+						value: 'subscription.payment_method.updated',
+						description: 'Triggered when a subscription payment method is updated',
+					},
+					{
+						name: 'Subscription Products Ordered',
+						value: 'subscription.products.ordered',
+						description: 'Triggered when subscription products are ordered',
+					},
+					{
+						name: 'Subscription Resumed',
+						value: 'subscription.resumed',
+						description: 'Triggered when a subscription is resumed',
+					},
+					{
+						name: 'Subscription Terminated',
+						value: 'subscription.terminated',
+						description: 'Triggered when a subscription is terminated',
+					},
+					{
+						name: 'Subscription Trial Expired',
+						value: 'subscription.trial_expired',
+						description: 'Triggered when a subscription trial expires',
+					},
+					{
+						name: 'Subscription Trial Extended',
+						value: 'subscription.trial_extended',
+						description: 'Triggered when a subscription trial is extended',
+					},
+					{
+						name: 'Subscription Updated',
+						value: 'subscription.updated',
+						description: 'Triggered when a subscription is updated',
+					},
+				],
+				default: 'customer.created',
+				description: 'The Fynn event to listen for',
 			},
-		},
-		properties: [...webhookDescription],
+			{
+				displayName: 'Webhook Secret',
+				name: 'webhookSecret',
+				type: 'string',
+				typeOptions: {
+					password: true,
+				},
+				default: '',
+				description:
+					'The webhook secret to validate the signature. You can find this in Fynn Settings → Webhooks → Details.',
+			},
+			{
+				displayName: 'Options',
+				name: 'options',
+				type: 'collection',
+				placeholder: 'Add Option',
+				default: {},
+				options: [
+					{
+						displayName: 'Auto Register Webhook',
+						name: 'autoRegister',
+						type: 'boolean',
+						default: true,
+						description:
+							'Whether to automatically register the webhook with Fynn when the workflow is activated',
+					},
+				],
+			},
+		],
 	};
 
 	webhookMethods = {
@@ -93,9 +409,14 @@ export class FynnTrigger implements INodeType {
 					const errorDetails = errorResponse.response?.data
 						? JSON.stringify(errorResponse.response.data)
 						: '';
-					throw new ApplicationError(`Failed to register webhook: ${errorMessage}${errorDetails ? ` - ${errorDetails}` : ''}`, {
-						level: 'error',
-					});
+					throw new ApplicationError(
+						`Failed to register webhook: ${errorMessage}${
+							errorDetails ? ` - ${errorDetails}` : ''
+						}`,
+						{
+							level: 'error',
+						},
+					);
 				}
 
 				return false;
@@ -132,69 +453,31 @@ export class FynnTrigger implements INodeType {
 					const errorDetails = errorResponse.response?.data
 						? JSON.stringify(errorResponse.response.data)
 						: '';
-					throw new ApplicationError(`Failed to delete webhook: ${errorMessage}${errorDetails ? ` - ${errorDetails}` : ''}`, {
-						level: 'error',
-					});
+					throw new ApplicationError(
+						`Failed to delete webhook: ${errorMessage}${
+							errorDetails ? ` - ${errorDetails}` : ''
+						}`,
+						{
+							level: 'error',
+						},
+					);
 				}
 			},
 		},
 	};
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
-		const event = this.getNodeParameter('event') as string;
-		const webhookSecret = this.getNodeParameter('webhookSecret') as string;
 		const req = this.getRequestObject();
+		const body = req.body as IDataObject | IDataObject[];
 		
-		// Get raw body for signature validation
-		const rawBody = this.getBodyData();
-		const body = typeof rawBody === 'string' ? rawBody : JSON.stringify(req.body);
-		const bodyData = (typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody) as IDataObject | IDataObject[];
-
-		// n8n sends webhook data as an array with a wrapper object
-		// Extract the actual webhook payload from the wrapper
-		let webhookPayload: IDataObject;
-		if (Array.isArray(bodyData) && bodyData.length > 0) {
-			// n8n format: [{ body: { event: {...}, data: {...} }, headers: {...}, ... }]
-			const wrapper = bodyData[0] as IDataObject;
-			webhookPayload = (wrapper.body as IDataObject) || wrapper;
-		} else {
-			// Fallback: assume direct format
-			webhookPayload = bodyData as IDataObject;
-		}
-
-		// Validate webhook signature
-		if (webhookSecret) {
-			const signature = req.headers['x-webhook-signature'] as string;
-			const expectedSignature = createHmac('sha256', webhookSecret)
-				.update(body)
-				.digest('hex');
-
-			if (signature !== expectedSignature) {
-				return {
-					workflowData: [],
-					webhookResponse: {
-						error: 'Invalid signature',
-					},
-				};
-			}
-		}
-
-		// Check if the event matches the configured event
-		// The event type is in webhookPayload.event.type
-		const eventData = webhookPayload?.event as IDataObject;
-		const webhookEvent = eventData?.type as string || webhookPayload?.event as string || webhookPayload?.type as string;
-		
-		if (webhookEvent && webhookEvent !== event) {
-			return {
-				workflowData: [],
-				noWebhookResponse: true,
-			};
-		}
-
-		// Return the actual webhook payload (event + data), not the wrapper
 		return {
-			workflowData: [this.helpers.returnJsonArray(webhookPayload)],
+			workflowData: [this.helpers.returnJsonArray(body)],
+			webhookResponse: {
+				statusCode: 200,
+				body: { received: true },
+			},
 		};
 	}
 }
+
 
