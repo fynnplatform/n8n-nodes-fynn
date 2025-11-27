@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.15] - 2025-11-27
+
+### Fixed
+
+- **Webhook Trigger**: Webhook-Endpoint gibt jetzt korrekte JSON-Antwort zurück
+  - Webhook-Payloads werden jetzt korrekt an den Workflow weitergegeben
+
 ## [0.2.3] - 2025-11-20
 
 ### Added
