@@ -29,6 +29,7 @@ export class FynnTrigger implements INodeType {
 				name: 'default',
 				httpMethod: 'POST',
 				responseMode: 'onReceived',
+				responseData: 'noData',
 				path: 'webhook',
 			},
 		],
@@ -468,14 +469,15 @@ export class FynnTrigger implements INodeType {
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
+		const res = this.getResponseObject();
 		const body = req.body as IDataObject | IDataObject[];
+		
+		// Send immediate response
+		res.status(200).json({ received: true });
 		
 		return {
 			workflowData: [this.helpers.returnJsonArray(body)],
-			webhookResponse: {
-				statusCode: 200,
-				body: { received: true },
-			},
+			noWebhookResponse: true,
 		};
 	}
 }
