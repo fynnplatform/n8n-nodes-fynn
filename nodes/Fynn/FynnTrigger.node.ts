@@ -365,7 +365,41 @@ export class FynnTrigger implements INodeType {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
 				const webhookId = this.getWorkflowStaticData('node').webhookId as string | undefined;
-				return !!webhookId;
+				
+				if (!webhookId) {
+					return false;
+				}
+
+				// Verify that the webhook actually exists in Fynn
+				try {
+					const credentials = await this.getCredentials('fynnApi');
+					const tenantName = credentials.tenantName as string;
+					const accessToken = credentials.accessToken as string;
+
+					await this.helpers.httpRequest({
+						method: 'GET',
+						url: `https://${tenantName}.coreapi.io/webhooks/${webhookId}`,
+						headers: {
+							Authorization: `Bearer ${accessToken}`,
+						},
+					});
+
+					return true;
+				} catch (error) {
+					// Webhook doesn't exist in Fynn, clean up static data
+					const errorResponse = error as { response?: { statusCode?: number }; message?: string };
+					const statusCode = errorResponse.response?.statusCode;
+					
+					// If webhook not found (404), clean up static data
+					if (statusCode === 404) {
+						delete this.getWorkflowStaticData('node').webhookId;
+						return false;
+					}
+
+					// For other errors, assume webhook exists (fallback to previous behavior)
+					// This prevents false negatives due to network issues
+					return true;
+				}
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const event = this.getNodeParameter('event') as string;
@@ -378,6 +412,48 @@ export class FynnTrigger implements INodeType {
 				// Skip auto-registration if disabled
 				if (options.autoRegister === false) {
 					return true;
+				}
+
+				// Check for existing webhooks with same URL and event before creating
+				try {
+					const existingWebhooks = await this.helpers.httpRequest({
+						method: 'GET',
+						url: `https://${tenantName}.coreapi.io/webhooks`,
+						headers: {
+							Authorization: `Bearer ${accessToken}`,
+						},
+						json: true,
+					});
+
+					// Find duplicate webhooks (same URL and event)
+					const webhooks = Array.isArray(existingWebhooks) ? existingWebhooks : existingWebhooks.data || [];
+					const duplicateWebhooks = webhooks.filter((wh: IDataObject) => {
+						const whUrl = wh.url as string;
+						const whEvents = (wh.events as string[]) || [];
+						return whUrl === webhookUrl && whEvents.includes(event);
+					});
+
+					// Delete duplicate webhooks
+					for (const duplicate of duplicateWebhooks) {
+						const duplicateId = duplicate.id as string;
+						if (duplicateId) {
+							try {
+								await this.helpers.httpRequest({
+									method: 'DELETE',
+									url: `https://${tenantName}.coreapi.io/webhooks/${duplicateId}`,
+									headers: {
+										Authorization: `Bearer ${accessToken}`,
+									},
+								});
+							} catch {
+								// Continue with webhook creation even if deletion fails
+								// Error is silently ignored to prevent blocking the webhook creation process
+							}
+						}
+					}
+				} catch {
+					// If listing webhooks fails, continue with creation anyway (fallback to previous behavior)
+					// Error is silently ignored to prevent blocking the webhook creation process
 				}
 
 				try {
